@@ -19,7 +19,6 @@ import java.util.List;
 public class ItemFlyingStick extends Item {
 	public ItemFlyingStick() {
 		super(new Item.Settings().group(ItemGroup.TOOLS).maxCount(1));
-		//this.("flying_stick");
 	}
 
 	public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
