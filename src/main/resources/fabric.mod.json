@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "flycommand",
+  "version": "${version}",
+  "name": "FlyCommandMod",
+  "description": "add /fly command.",
+  "authors": [
+    "hamusuke2303"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "CC0-1.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.hamusuke.flycommod.Main"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
