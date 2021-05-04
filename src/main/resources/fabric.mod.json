@@ -8,8 +8,8 @@
     "hamusuke2303"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/flycommandmod-fabric",
+    "sources": "https://github.com/hamusuke0323/FlyCommandMod-Fabric"
   },
   "license": "CC0-1.0",
   "environment": "*",
