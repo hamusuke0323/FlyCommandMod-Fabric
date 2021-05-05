@@ -28,14 +28,14 @@ public class ItemFlyingStick extends Item {
 
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerIn, Hand handIn) {
 		ItemStack item = playerIn.getStackInHand(handIn);
-		if(!playerIn.abilities.allowFlying) {
+		if (!playerIn.abilities.allowFlying) {
 			playerIn.abilities.allowFlying = true;
 			playerIn.sendAbilitiesUpdate();
-		}else {
+		} else {
 			playerIn.abilities.allowFlying = false;
 			playerIn.abilities.flying = false;
 			playerIn.sendAbilitiesUpdate();
-			playerIn.fallDistance = -(float)(playerIn.getY() + 10.0D);
+			playerIn.fallDistance = -(float) (playerIn.getY() + 10.0D);
 		}
 		return new TypedActionResult<>(ActionResult.SUCCESS, item);
 	}

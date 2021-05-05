@@ -29,7 +29,7 @@ public class CommandEntityAbilities {
 	private static int noGravity(ServerCommandSource source, Collection<? extends Entity> entities, boolean flag) {
 		entities.forEach((entity) -> {
 			entity.setNoGravity(flag);
-			if (flag) {
+			if (!flag) {
 				entity.fallDistance = -(float) (entity.getY() + 10.0D);
 			}
 		});
