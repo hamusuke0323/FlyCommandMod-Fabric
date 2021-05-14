@@ -16,6 +16,7 @@ public class Main implements ModInitializer {
 
 	public void onInitialize() {
 		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "flying_stick"), FLYING_STICK);
+
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
 			CommandFlying.register(dispatcher);
 			CommandEntityAbilities.register(dispatcher);
