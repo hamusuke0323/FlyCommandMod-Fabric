@@ -1,7 +1,6 @@
 {
  "item.flycommand.flying_stick": "飛行許可棒",
  "item.flycommand.flying_stick.desc": "右クリックで飛行の許可と禁止を切り替えます",
- "hamusuke.command.fly.error": "このコマンドはサーバーでは使用できません",
  "hamusuke.command.fly.success.getflyspeed": "%s の飛行速度は %s です",
  "hamusuke.command.fly.success.getwalkspeed": "%s の歩行速度は %s です",
  "hamusuke.command.fly.success.allow.single": "%s を飛行可能にしました",

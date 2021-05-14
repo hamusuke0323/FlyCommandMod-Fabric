@@ -1,7 +1,6 @@
 {
  "item.flycommand.flying_stick": "AllowFlyingStick",
  "item.flycommand.flying_stick.desc": "Right click to toggle allow and disallow flying",
- "hamusuke.command.fly.error": "This command can not use in server",
  "hamusuke.command.fly.success.getflyspeed": "%s's flight speed is %s",
  "hamusuke.command.fly.success.getwalkspeed": "%s's walk speed is %s",
  "hamusuke.command.fly.success.allow.single": "%s can now fly",
