@@ -16,8 +16,14 @@
   "entrypoints": {
     "main": [
       "com.hamusuke.flycommod.Main"
+    ],
+    "client": [
+      "com.hamusuke.flycommod.client.MainClient"
     ]
   },
+  "mixins": [
+    "flycommand.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.11.3",
     "fabric": "*",

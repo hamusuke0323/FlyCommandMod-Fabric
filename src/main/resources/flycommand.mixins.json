@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.hamusuke.flycommod.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "LivingEntityMixin"
+  ],
+  "client": [
+    "client.ClientPlayNetworkHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

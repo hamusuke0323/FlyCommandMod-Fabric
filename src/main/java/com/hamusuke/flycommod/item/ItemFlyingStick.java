@@ -1,5 +1,6 @@
 package com.hamusuke.flycommod.item;
 
+import com.hamusuke.flycommod.invoker.LivingEntityInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -34,7 +35,7 @@ public class ItemFlyingStick extends Item {
 			playerIn.getAbilities().allowFlying = false;
 			playerIn.getAbilities().flying = false;
 			playerIn.sendAbilitiesUpdate();
-			playerIn.fallDistance = -(float) (playerIn.getY() + 10.0D);
+			((LivingEntityInvoker) playerIn).markNoFallDamage(!playerIn.isOnGround());
 		}
 		return TypedActionResult.success(item);
 	}

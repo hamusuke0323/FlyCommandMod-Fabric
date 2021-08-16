@@ -1,5 +1,6 @@
 package com.hamusuke.flycommod.command;
 
+import com.hamusuke.flycommod.invoker.LivingEntityInvoker;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -93,7 +94,7 @@ public class CommandFlying {
 			serverPlayerEntity.getAbilities().allowFlying = false;
 			serverPlayerEntity.getAbilities().flying = false;
 			serverPlayerEntity.sendAbilitiesUpdate();
-			serverPlayerEntity.fallDistance = -(float) (serverPlayerEntity.getY() + 10.0D);
+			((LivingEntityInvoker) serverPlayerEntity).markNoFallDamage(!serverPlayerEntity.isOnGround());
 		});
 
 		if (players.size() == 1) {
@@ -120,7 +121,7 @@ public class CommandFlying {
 	private static int gravity(CommandContext<ServerCommandSource> source, Collection<ServerPlayerEntity> players) {
 		players.forEach(serverPlayerEntity -> {
 			serverPlayerEntity.setNoGravity(false);
-			serverPlayerEntity.fallDistance = -(float) (serverPlayerEntity.getY() + 10.0D);
+			((LivingEntityInvoker) serverPlayerEntity).markNoFallDamage(!serverPlayerEntity.isOnGround());
 		});
 
 		if (players.size() == 1) {

@@ -1,10 +1,12 @@
 package com.hamusuke.flycommod.command;
 
+import com.hamusuke.flycommod.invoker.LivingEntityInvoker;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.TranslatableText;
@@ -41,8 +43,8 @@ public class CommandEntityAbilities {
 	private static int noGravity(ServerCommandSource source, Collection<? extends Entity> entities, boolean flag) {
 		entities.forEach((entity) -> {
 			entity.setNoGravity(flag);
-			if (!flag) {
-				entity.fallDistance = -(float) (entity.getY() + 10.0D);
+			if (!flag && entity instanceof LivingEntity livingEntity) {
+				((LivingEntityInvoker) livingEntity).markNoFallDamage(!entity.isOnGround());
 			}
 		});
 
