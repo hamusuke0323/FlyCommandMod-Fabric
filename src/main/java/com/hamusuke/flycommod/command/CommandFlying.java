@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.command.CommandManager;
@@ -14,10 +15,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class CommandFlying {
 	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		LiteralArgumentBuilder<ServerCommandSource> literalArgumentBuilder = CommandManager.literal("fly").requires((permission) -> permission.hasPermissionLevel(2));
+		LiteralArgumentBuilder<ServerCommandSource> literalArgumentBuilder = CommandManager.literal("fly").requires((permission) -> permission.hasPermissionLevel(2)).executes(CommandFlying::toggle);
 
 		literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("allow").executes(e -> allow(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(serverPlayerEntity -> !serverPlayerEntity.getAbilities().allowFlying).toList()))));
 
@@ -72,6 +74,11 @@ public class CommandFlying {
 		}))));
 
 		dispatcher.register(literalArgumentBuilder);
+	}
+
+	private static int toggle(CommandContext<ServerCommandSource> source) throws CommandSyntaxException {
+		ServerPlayerEntity serverPlayerEntity = source.getSource().getPlayer();
+		return serverPlayerEntity.getAbilities().allowFlying ? disallow(source, Collections.singleton(serverPlayerEntity)) : allow(source, Collections.singleton(serverPlayerEntity));
 	}
 
 	private static int allow(CommandContext<ServerCommandSource> source, Collection<ServerPlayerEntity> players) {
