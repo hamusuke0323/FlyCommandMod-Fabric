@@ -1,5 +1,6 @@
 package com.hamusuke.flycommod.item;
 
+import com.hamusuke.flycommod.invoker.LivingEntityInvoker;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -7,7 +8,6 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Rarity;
 import net.minecraft.util.TypedActionResult;
@@ -27,24 +27,25 @@ public class ItemFlyingStick extends Item {
 	}
 
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerIn, Hand handIn) {
-		ItemStack item = playerIn.getStackInHand(handIn);
-		if(!playerIn.abilities.allowFlying) {
-			playerIn.abilities.allowFlying = true;
-			playerIn.sendAbilitiesUpdate();
-		}else {
-			playerIn.abilities.allowFlying = false;
-			playerIn.abilities.flying = false;
-			playerIn.sendAbilitiesUpdate();
-			playerIn.fallDistance = -(float)(playerIn.getY() + 10.0D);
-		}
-		return new TypedActionResult<>(ActionResult.SUCCESS, item);
-	}
+        ItemStack item = playerIn.getStackInHand(handIn);
+        if (!playerIn.abilities.allowFlying) {
+            playerIn.abilities.allowFlying = true;
+            playerIn.sendAbilitiesUpdate();
+        } else {
+            playerIn.abilities.allowFlying = false;
+            playerIn.abilities.flying = false;
+            playerIn.sendAbilitiesUpdate();
+            ((LivingEntityInvoker) playerIn).markNoFallDamage(!playerIn.onGround);
+        }
+
+        return TypedActionResult.success(item);
+    }
 
 	public Rarity getRarity(ItemStack stack) {
 		return Rarity.EPIC;
 	}
 
-	public boolean hasGlint(ItemStack stack) {
-		return true;
-	}
+    public boolean hasEnchantmentGlint(ItemStack stack) {
+        return true;
+    }
 }

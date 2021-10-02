@@ -1,32 +1,35 @@
 package com.hamusuke.flycommod.command;
 
-import com.hamusuke.flycommod.invoker.PlayerAbilitiesInvoker;
+import com.hamusuke.flycommod.invoker.LivingEntityInvoker;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.arguments.EntityArgumentType;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.TranslatableText;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
-public class CommandFlying {
-	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-		LiteralArgumentBuilder<ServerCommandSource> literalArgumentBuilder = CommandManager.literal("fly").requires((permission) -> permission.hasPermissionLevel(2));
+public class FlyCommand {
+    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+        LiteralArgumentBuilder<ServerCommandSource> literalArgumentBuilder = CommandManager.literal("fly").requires((permission) -> permission.hasPermissionLevel(2)).executes(FlyCommand::toggle);
 
-		literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("allow").executes(e -> allow(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(serverPlayerEntity -> !serverPlayerEntity.abilities.allowFlying).collect(Collectors.toList())))));
+        literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("allow").executes(e -> allow(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(serverPlayerEntity -> !serverPlayerEntity.abilities.allowFlying).collect(Collectors.toList())))));
 
-		literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("noAllow").executes(e -> disallow(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(serverPlayerEntity -> serverPlayerEntity.abilities.allowFlying).collect(Collectors.toList())))));
+        literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("noAllow").executes(e -> disallow(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(serverPlayerEntity -> serverPlayerEntity.abilities.allowFlying).collect(Collectors.toList())))));
 
-		literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("noGravity").executes(e -> noGravity(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(serverPlayerEntity -> !serverPlayerEntity.hasNoGravity()).collect(Collectors.toList())))));
+        literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("noGravity").executes(e -> noGravity(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(serverPlayerEntity -> !serverPlayerEntity.hasNoGravity()).collect(Collectors.toList())))));
 
-		literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("gravity").executes(e -> gravity(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(Entity::hasNoGravity).collect(Collectors.toList())))));
+        literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("gravity").executes(e -> gravity(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(Entity::hasNoGravity).collect(Collectors.toList())))));
 
 		literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("getFlySpeed").executes(e -> getFlySpeed(e, EntityArgumentType.getPlayers(e, "targets")))));
 
@@ -65,25 +68,30 @@ public class CommandFlying {
 		literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("setInvulnerable").then(CommandManager.argument("boolean", BoolArgumentType.bool()).executes(e -> {
 			boolean flag = BoolArgumentType.getBool(e, "boolean");
 			return isInvulnerable(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(serverPlayerEntity -> serverPlayerEntity.isInvulnerable() != flag).collect(Collectors.toList()), flag);
-		}))));
+        }))));
 
-		literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("setInvisible").then(CommandManager.argument("boolean", BoolArgumentType.bool()).executes(e -> {
-			boolean flag = BoolArgumentType.getBool(e, "boolean");
-			return isInvisible(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(serverPlayerEntity -> serverPlayerEntity.isInvisible() != flag).collect(Collectors.toList()), flag);
-		}))));
+        literalArgumentBuilder.then(CommandManager.argument("targets", EntityArgumentType.players()).then(CommandManager.literal("setInvisible").then(CommandManager.argument("boolean", BoolArgumentType.bool()).executes(e -> {
+            boolean flag = BoolArgumentType.getBool(e, "boolean");
+            return isInvisible(e, EntityArgumentType.getPlayers(e, "targets").stream().filter(serverPlayerEntity -> serverPlayerEntity.isInvisible() != flag).collect(Collectors.toList()), flag);
+        }))));
 
-		dispatcher.register(literalArgumentBuilder);
-	}
+        dispatcher.register(literalArgumentBuilder);
+    }
 
-	private static int allow(CommandContext<ServerCommandSource> source, Collection<ServerPlayerEntity> players) {
-		players.forEach(serverPlayerEntity -> {
-			serverPlayerEntity.abilities.allowFlying = true;
-			serverPlayerEntity.sendAbilitiesUpdate();
-		});
+    private static int toggle(CommandContext<ServerCommandSource> source) throws CommandSyntaxException {
+        ServerPlayerEntity serverPlayerEntity = source.getSource().getPlayer();
+        return serverPlayerEntity.abilities.allowFlying ? disallow(source, Collections.singleton(serverPlayerEntity)) : allow(source, Collections.singleton(serverPlayerEntity));
+    }
 
-		if (players.size() == 1) {
-			source.getSource().sendFeedback(new TranslatableText("hamusuke.command.fly.success.allow.single", players.iterator().next().getDisplayName()), true);
-		} else {
+    private static int allow(CommandContext<ServerCommandSource> source, Collection<ServerPlayerEntity> players) {
+        players.forEach(serverPlayerEntity -> {
+            serverPlayerEntity.abilities.allowFlying = true;
+            serverPlayerEntity.sendAbilitiesUpdate();
+        });
+
+        if (players.size() == 1) {
+            source.getSource().sendFeedback(new TranslatableText("hamusuke.command.fly.success.allow.single", players.iterator().next().getDisplayName()), true);
+        } else {
 			source.getSource().sendFeedback(new TranslatableText("hamusuke.command.fly.success.allow.multiple", players.size()), true);
 		}
 
@@ -94,8 +102,8 @@ public class CommandFlying {
 		players.forEach(serverPlayerEntity -> {
 			serverPlayerEntity.abilities.allowFlying = false;
 			serverPlayerEntity.abilities.flying = false;
-			serverPlayerEntity.sendAbilitiesUpdate();
-			serverPlayerEntity.fallDistance = -(float) (serverPlayerEntity.getY() + 10.0D);
+            serverPlayerEntity.sendAbilitiesUpdate();
+            ((LivingEntityInvoker) serverPlayerEntity).markNoFallDamage(!serverPlayerEntity.onGround);
 		});
 
 		if (players.size() == 1) {
@@ -121,8 +129,8 @@ public class CommandFlying {
 
 	private static int gravity(CommandContext<ServerCommandSource> source, Collection<ServerPlayerEntity> players) {
 		players.forEach(serverPlayerEntity -> {
-			serverPlayerEntity.setNoGravity(false);
-			serverPlayerEntity.fallDistance = -(float) (serverPlayerEntity.getY() + 10.0D);
+            serverPlayerEntity.setNoGravity(false);
+            ((LivingEntityInvoker) serverPlayerEntity).markNoFallDamage(!serverPlayerEntity.onGround);
 		});
 
 		if (players.size() == 1) {
@@ -146,9 +154,13 @@ public class CommandFlying {
 
 	private static int setFlySpeed(CommandContext<ServerCommandSource> source, Collection<ServerPlayerEntity> players, float flySpeed) {
 		players.forEach(serverPlayerEntity -> {
-			((PlayerAbilitiesInvoker) serverPlayerEntity.abilities).setFlySpeed(flySpeed);
-			serverPlayerEntity.sendAbilitiesUpdate();
-		});
+            CompoundTag compoundTag = new CompoundTag();
+            serverPlayerEntity.abilities.serialize(compoundTag);
+            CompoundTag compoundTag1 = compoundTag.getCompound("abilities");
+            compoundTag1.putFloat("flySpeed", flySpeed);
+            serverPlayerEntity.abilities.deserialize(compoundTag);
+            serverPlayerEntity.sendAbilitiesUpdate();
+        });
 
 		if (players.size() == 1) {
 			source.getSource().sendFeedback(new TranslatableText("hamusuke.command.fly.success.setflyspeed.single", players.iterator().next().getDisplayName(), flySpeed), true);
@@ -161,9 +173,13 @@ public class CommandFlying {
 
 	private static int setWalkSpeed(CommandContext<ServerCommandSource> source, Collection<ServerPlayerEntity> players, float walkSpeed) {
 		players.forEach(serverPlayerEntity -> {
-			((PlayerAbilitiesInvoker) serverPlayerEntity.abilities).setWalkSpeed(walkSpeed);
-			serverPlayerEntity.sendAbilitiesUpdate();
-		});
+            CompoundTag compoundTag = new CompoundTag();
+            serverPlayerEntity.abilities.serialize(compoundTag);
+            CompoundTag compoundTag1 = compoundTag.getCompound("abilities");
+            compoundTag1.putFloat("walkSpeed", walkSpeed);
+            serverPlayerEntity.abilities.deserialize(compoundTag);
+            serverPlayerEntity.sendAbilitiesUpdate();
+        });
 
 		if (players.size() == 1) {
 			source.getSource().sendFeedback(new TranslatableText("hamusuke.command.fly.success.setwalkspeed.single", players.iterator().next().getDisplayName(), walkSpeed), true);

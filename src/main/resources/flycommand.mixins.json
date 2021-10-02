@@ -4,7 +4,8 @@
   "package": "com.hamusuke.flycommod.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "PlayerAbilitiesMixin"
+    "LivingEntityMixin",
+    "ServerPlayerEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -18,7 +18,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.hamusuke.flycommod.Main"
+      "com.hamusuke.flycommod.FlyCommandMod"
+    ],
+    "client": [
+      "com.hamusuke.flycommod.client.FlyCommandModClient"
     ]
   },
   "depends": {
