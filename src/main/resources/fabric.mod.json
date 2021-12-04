@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "flycommand",
+  "version": "${version}",
+  "name": "FlyCommandMod",
+  "description": "add /fly command.",
+  "authors": [
+    "hamusuke2303"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/flycommandmod-fabric",
+    "sources": "https://github.com/hamusuke0323/FlyCommandMod-Fabric"
+  },
+  "license": "CC0-1.0",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.hamusuke.flycommod.FlyCommandMod"
+    ],
+    "client": [
+      "com.hamusuke.flycommod.client.FlyCommandModClient"
+    ]
+  },
+  "mixins": [
+    "flycommand.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": "1.18.x",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
