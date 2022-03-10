@@ -1,14 +1,16 @@
 package com.hamusuke.flycommod.mixin;
 
 import com.hamusuke.flycommod.invoker.LivingEntityInvoker;
+import com.hamusuke.flycommod.network.MarkNoFallDamagePacket;
+import com.hamusuke.flycommod.network.NetworkManager;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,15 +20,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements LivingEntityInvoker {
-    private static final TrackedData<Boolean> NO_FALL_DAMAGE_MARKED = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private boolean isNoFallDamageMarked;
 
     LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
-    }
-
-    @Inject(method = "initDataTracker", at = @At("TAIL"))
-    private void initDataTracker(CallbackInfo ci) {
-        this.dataTracker.startTracking(NO_FALL_DAMAGE_MARKED, false);
     }
 
     @Inject(method = "handleFallDamage", at = @At("HEAD"), cancellable = true)
@@ -50,11 +47,16 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 
     @Override
     public void markNoFallDamage(boolean flag) {
-        this.dataTracker.set(NO_FALL_DAMAGE_MARKED, flag);
+        if (!this.world.isClient) {
+            PacketByteBuf byteBuf = new MarkNoFallDamagePacket(this.getId(), flag).write(PacketByteBufs.create());
+            this.world.getServer().getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> serverPlayerEntity.networkHandler.sendPacket(new CustomPayloadS2CPacket(NetworkManager.NO_FALL_MARK_PACKET, byteBuf)));
+        }
+
+        this.isNoFallDamageMarked = flag;
     }
 
     @Override
     public boolean isNoFallDamageMarked() {
-        return this.dataTracker.get(NO_FALL_DAMAGE_MARKED);
+        return this.isNoFallDamageMarked;
     }
 }
