@@ -7,18 +7,16 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityWorldChangeEvents;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 public class FlyCommandMod implements ModInitializer {
 	public static final String MOD_ID = "flycommand";
-
-	public static final Item FLYING_STICK = new FlyingStickItem();
+	public static final Item FLYING_STICK = Registry.register(Registries.ITEM, new Identifier(MOD_ID, "flying_stick"), new FlyingStickItem());
 
 	@Override
 	public void onInitialize() {
-		Registry.register(Registry.ITEM, new Identifier(MOD_ID, "flying_stick"), FLYING_STICK);
-
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, registrationEnvironment) -> {
 			FlyCommand.register(dispatcher);
 			EntityAbilitiesCommand.register(dispatcher);
