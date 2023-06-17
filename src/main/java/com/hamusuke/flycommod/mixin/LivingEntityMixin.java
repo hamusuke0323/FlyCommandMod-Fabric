@@ -47,9 +47,9 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
 
     @Override
     public void markNoFallDamage(boolean flag) {
-        if (!this.world.isClient) {
+        if (!this.getWorld().isClient) {
             PacketByteBuf byteBuf = new MarkNoFallDamagePacket(this.getId(), flag).write(PacketByteBufs.create());
-            this.world.getServer().getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> serverPlayerEntity.networkHandler.sendPacket(new CustomPayloadS2CPacket(NetworkManager.NO_FALL_MARK_PACKET, byteBuf)));
+            this.getWorld().getServer().getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> serverPlayerEntity.networkHandler.sendPacket(new CustomPayloadS2CPacket(NetworkManager.NO_FALL_MARK_PACKET, byteBuf)));
         }
 
         this.isNoFallDamageMarked = flag;
