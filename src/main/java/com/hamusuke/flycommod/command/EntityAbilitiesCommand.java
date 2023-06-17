@@ -48,9 +48,9 @@ public class EntityAbilitiesCommand {
 		});
 
 		if (entities.size() == 1) {
-			source.sendFeedback(Text.translatable("hamusuke.command.entityabilities.success.nogravity." + flag + ".single", entities.iterator().next().getDisplayName()), true);
+			source.sendFeedback(() ->  Text.translatable("hamusuke.command.entityabilities.success.nogravity." + flag + ".single", entities.iterator().next().getDisplayName()), true);
 		} else if (entities.size() > 1) {
-			source.sendFeedback(Text.translatable("hamusuke.command.entityabilities.success.nogravity." + flag + ".multiple", entities.size()), true);
+			source.sendFeedback(() ->  Text.translatable("hamusuke.command.entityabilities.success.nogravity." + flag + ".multiple", entities.size()), true);
 		}
 
 		return entities.size();
@@ -60,9 +60,9 @@ public class EntityAbilitiesCommand {
 		entities.forEach(entity -> entity.setGlowing(flag));
 
 		if (entities.size() == 1) {
-			source.sendFeedback(Text.translatable("hamusuke.command.entityabilities.success.setglowing." + flag + ".single", entities.iterator().next().getDisplayName()), true);
+			source.sendFeedback(() ->  Text.translatable("hamusuke.command.entityabilities.success.setglowing." + flag + ".single", entities.iterator().next().getDisplayName()), true);
 		} else if (entities.size() > 1) {
-			source.sendFeedback(Text.translatable("hamusuke.command.entityabilities.success.setglowing." + flag + ".multiple", entities.size()), true);
+			source.sendFeedback(() ->  Text.translatable("hamusuke.command.entityabilities.success.setglowing." + flag + ".multiple", entities.size()), true);
 		}
 
 		return entities.size();
@@ -72,9 +72,9 @@ public class EntityAbilitiesCommand {
 		entities.forEach(entity -> entity.setInvulnerable(flag));
 
 		if (entities.size() == 1) {
-			source.sendFeedback(Text.translatable("hamusuke.command.entityabilities.success.setinvulnerable." + flag + ".single", entities.iterator().next().getDisplayName()), true);
+			source.sendFeedback(() ->  Text.translatable("hamusuke.command.entityabilities.success.setinvulnerable." + flag + ".single", entities.iterator().next().getDisplayName()), true);
 		} else if (entities.size() > 1) {
-			source.sendFeedback(Text.translatable("hamusuke.command.entityabilities.success.setinvulnerable." + flag + ".multiple", entities.size()), true);
+			source.sendFeedback(() ->  Text.translatable("hamusuke.command.entityabilities.success.setinvulnerable." + flag + ".multiple", entities.size()), true);
 		}
 
 		return entities.size();
@@ -84,9 +84,9 @@ public class EntityAbilitiesCommand {
 		entities.forEach(entity -> entity.setInvisible(flag));
 
 		if (entities.size() == 1) {
-			source.sendFeedback(Text.translatable("hamusuke.command.entityabilities.success.invisible." + flag + ".single", entities.iterator().next().getDisplayName()), true);
+			source.sendFeedback(() ->  Text.translatable("hamusuke.command.entityabilities.success.invisible." + flag + ".single", entities.iterator().next().getDisplayName()), true);
 		} else if (entities.size() > 1) {
-			source.sendFeedback(Text.translatable("hamusuke.command.entityabilities.success.invisible." + flag + ".multiple", entities.size()), true);
+			source.sendFeedback(() ->  Text.translatable("hamusuke.command.entityabilities.success.invisible." + flag + ".multiple", entities.size()), true);
 		}
 
 		return entities.size();
