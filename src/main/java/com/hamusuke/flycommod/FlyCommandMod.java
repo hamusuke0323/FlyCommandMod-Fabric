@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 
 public class FlyCommandMod implements ModInitializer {
 	public static final String MOD_ID = "flycommand";
-	public static final Item FLYING_STICK = Registry.register(Registries.ITEM, new Identifier(MOD_ID, "flying_stick"), new FlyingStickItem());
+	public static final Item FLYING_STICK = Registry.register(Registries.ITEM, Identifier.of(MOD_ID, "flying_stick"), new FlyingStickItem());
 
 	@Override
 	public void onInitialize() {

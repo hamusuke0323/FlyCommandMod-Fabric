@@ -14,7 +14,7 @@
         }
     },
     "result": {
-        "item": "flycommand:flying_stick",
+        "id": "flycommand:flying_stick",
         "count": 1
     }
 }

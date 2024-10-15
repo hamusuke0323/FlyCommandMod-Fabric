@@ -2,17 +2,15 @@ package com.hamusuke.flycommod.mixin;
 
 import com.hamusuke.flycommod.invoker.LivingEntityInvoker;
 import com.hamusuke.flycommod.network.MarkNoFallDamagePacket;
-import com.hamusuke.flycommod.network.NetworkManager;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,6 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements LivingEntityInvoker {
+    @Shadow public abstract boolean blockedByShield(DamageSource source);
+
     private boolean isNoFallDamageMarked;
 
     LivingEntityMixin(EntityType<?> type, World world) {
@@ -48,8 +48,7 @@ public abstract class LivingEntityMixin extends Entity implements LivingEntityIn
     @Override
     public void markNoFallDamage(boolean flag) {
         if (!this.getWorld().isClient) {
-            PacketByteBuf byteBuf = new MarkNoFallDamagePacket(this.getId(), flag).write(PacketByteBufs.create());
-            this.getWorld().getServer().getPlayerManager().getPlayerList().forEach(serverPlayerEntity -> serverPlayerEntity.networkHandler.sendPacket(new CustomPayloadS2CPacket(NetworkManager.NO_FALL_MARK_PACKET, byteBuf)));
+            this.getWorld().getServer().getPlayerManager().sendToAll((new CustomPayloadS2CPacket(new MarkNoFallDamagePacket(this.getId(), flag))));
         }
 
         this.isNoFallDamageMarked = flag;
